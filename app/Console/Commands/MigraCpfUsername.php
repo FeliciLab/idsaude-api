@@ -38,14 +38,15 @@ class MigraCpfUsername extends Command
     /**
      * Execute the console command.
      *
-     * @return int
+     * @return mixed
      */
     public function handle()
     {
         try {
             $this->keycloakService->migraCPFAtributoParaUsername();
+            $this->info('Sucesso - Verifique na instância do ID Saúde a migração');
         } catch (Exception $e) {
-            return ['erro' => $e->getMessage()];
+            $this->error($e->getMessage());
         }
     }
 }
