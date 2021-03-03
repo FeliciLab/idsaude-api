@@ -29,9 +29,9 @@ class MigraCpfUsername extends Command
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(KeycloakService $keycloakService)
     {
-        $this->keycloakService = new KeycloakService();
+        $this->keycloakService = $keycloakService;
         parent::__construct();
     }
 

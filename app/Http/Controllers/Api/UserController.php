@@ -11,9 +11,9 @@ class UserController extends Controller
 {
     private $keycloakService;
 
-    public function __construct()
+    public function __construct(KeycloakService $keycloakService)
     {
-        $this->keycloakService = new KeycloakService();
+        $this->keycloakService = $keycloakService;
     }
 
     public function usernameCadastrado($username)
