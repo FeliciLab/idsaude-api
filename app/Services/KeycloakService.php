@@ -37,4 +37,23 @@ class KeycloakService
         return false;
     }
 
+    public function migraCPFAtributoParaUsername()
+    {
+        $usuarios = $this->idSaude->getUsers();
+
+        foreach ($usuarios as $usuario) {
+            if (isset($usuario['attributes']) &&
+                isset($usuario['attributes']['CPF'])) {
+                $cpf = $usuario['attributes']['CPF'][0];
+
+                $dadosKeycloak = [
+                    'username' => $cpf,
+                    'id' => $usuario['id']
+                ];
+
+                $this->idSaude->updateUser($dadosKeycloak);
+            }
+        }
+    }
+
 }
