@@ -47,7 +47,7 @@ class KeycloakService
                 $cpf = $usuario['attributes']['CPF'][0];
 
                 $dadosKeycloak = [
-                    'username' => $cpf,
+                    'username' => strlen($cpf) == 11 ? preg_replace("/(\d{3})(\d{3})(\d{3})(\d{2})/", "\$1.\$2.\$3-\$4", $cpf) : $cpf,
                     'id' => $usuario['id']
                 ];
 
@@ -55,5 +55,4 @@ class KeycloakService
             }
         }
     }
-
 }
