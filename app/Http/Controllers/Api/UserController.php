@@ -4,10 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\KeycloakService;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    private $keycloakService;
+
+    public function __construct(KeycloakService $keycloakService)
+    {
+        $this->keycloakService = $keycloakService;
+    }
+
     public function usernameCadastrado($username)
     {
         $dados = ['username' => $username];
@@ -22,8 +30,7 @@ class UserController extends Controller
             ]);
         }
 
-        $keycloakService = new KeycloakService();
-        $cpfCadastrado = $keycloakService->usernameExiste($username);
+        $cpfCadastrado = $this->keycloakService->usernameExiste($username);
 
         return response()->json([
             'existe' => $cpfCadastrado

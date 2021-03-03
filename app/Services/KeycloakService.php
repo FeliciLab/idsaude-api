@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\CPFHelper;
 use Keycloak\Admin\KeycloakClient;
 
 class KeycloakService
@@ -23,6 +24,10 @@ class KeycloakService
 
     public function usernameExiste($username)
     {
+        if (is_numeric($username) && strlen($username) == 11) {
+            $username = CPFHelper::formataCpf($username);
+        }
+
         $usuarios = $this->idSaude->getUsers([
             'search' => $username
         ]);
@@ -37,4 +42,22 @@ class KeycloakService
         return false;
     }
 
+    public function migraCPFAtributoParaUsername()
+    {
+        $usuarios = $this->idSaude->getUsers();
+
+        foreach ($usuarios as $usuario) {
+            if (isset($usuario['attributes']) &&
+                isset($usuario['attributes']['CPF'])) {
+                $cpf = $usuario['attributes']['CPF'][0];
+
+                $dadosKeycloak = [
+                    'username' => strlen($cpf) == 11 ? CPFHelper::formataCpf($cpf) : $cpf,
+                    'id' => $usuario['id']
+                ];
+
+                $this->idSaude->updateUser($dadosKeycloak);
+            }
+        }
+    }
 }
