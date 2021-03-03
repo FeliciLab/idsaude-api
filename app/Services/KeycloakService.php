@@ -23,6 +23,10 @@ class KeycloakService
 
     public function usernameExiste($username)
     {
+        if (is_numeric($username) && strlen($username) == 11) {
+            $username = $this->formataCpf($username);
+        }
+
         $usuarios = $this->idSaude->getUsers([
             'search' => $username
         ]);
@@ -47,12 +51,17 @@ class KeycloakService
                 $cpf = $usuario['attributes']['CPF'][0];
 
                 $dadosKeycloak = [
-                    'username' => strlen($cpf) == 11 ? preg_replace("/(\d{3})(\d{3})(\d{3})(\d{2})/", "\$1.\$2.\$3-\$4", $cpf) : $cpf,
+                    'username' => strlen($cpf) == 11 ? $this->formataCpf($cpf) : $cpf,
                     'id' => $usuario['id']
                 ];
 
                 $this->idSaude->updateUser($dadosKeycloak);
             }
         }
+    }
+
+    private function formataCpf($cpf)
+    {
+        return preg_replace("/(\d{3})(\d{3})(\d{3})(\d{2})/", "\$1.\$2.\$3-\$4", $cpf);
     }
 }
