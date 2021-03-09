@@ -44,7 +44,9 @@ class KeycloakService
 
     public function migraCPFAtributoParaUsername()
     {
-        $usuarios = $this->idSaude->getUsers();
+        $usuarios = $this->idSaude->getUsers([
+            'max' => 9999999
+        ]);
 
         foreach ($usuarios as $usuario) {
             if (isset($usuario['attributes']) &&
