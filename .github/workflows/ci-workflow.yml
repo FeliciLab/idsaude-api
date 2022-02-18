@@ -11,7 +11,7 @@ jobs:
       - name: Update composer
         run: sudo composer self-update
       - name: Install Dependencies
-        run: composer install
+        run: composer install --ignore-platform-reqs
       - name: Generate key
         run: php artisan key:generate
       - name: Directory Permissions
