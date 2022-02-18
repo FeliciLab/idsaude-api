@@ -24,10 +24,6 @@ class KeycloakService
 
     public function usernameExiste($username)
     {
-        if (is_numeric($username) && strlen($username) == 11) {
-            $username = CPFHelper::formataCpf($username);
-        }
-
         $usuarios = $this->idSaude->getUsers([
             'search' => $username
         ]);
@@ -42,24 +38,30 @@ class KeycloakService
         return false;
     }
 
+
     public function migraCPFAtributoParaUsername()
     {
         $usuarios = $this->idSaude->getUsers([
             'max' => 9999999
         ]);
-
+        $migrados = 0;
         foreach ($usuarios as $usuario) {
             if (isset($usuario['attributes']) &&
                 isset($usuario['attributes']['CPF'])) {
                 $cpf = $usuario['attributes']['CPF'][0];
-
-                $dadosKeycloak = [
-                    'username' => strlen($cpf) == 11 ? CPFHelper::formataCpf($cpf) : $cpf,
-                    'id' => $usuario['id']
-                ];
-
-                $this->idSaude->updateUser($dadosKeycloak);
+               
+                if (strlen($cpf) == 11) {
+                    $dadosKeycloak = [
+                        'username' =>$cpf,
+                        'id' => $usuario['id']
+                    ];
+    
+                    $this->idSaude->updateUser($dadosKeycloak);
+                    $migrados++;
+                }
             }
         }
+        $totalUsuarios = count($usuarios);
+        return "Sucesso - Migrados {$migrados} de {$totalUsuarios} usuários. Verifique na instância do ID Saúde a migração";
     }
 }
