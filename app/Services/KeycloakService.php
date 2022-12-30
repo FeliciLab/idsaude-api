@@ -38,6 +38,24 @@ class KeycloakService
         return false;
     }
 
+    public function updateProfile()
+    {
+        $usuarios = $this->idSaude->getUsers([
+            'max' => 9999999
+        ]);
+
+        foreach ($usuarios as $usuario) {
+
+            $this->idSaude->updateUser([
+                'id' => $usuario['id'],
+                'requiredActions' => ['UPDATE_PROFILE']
+            ]);
+
+            print_r($this->idSaude->getUser([
+                'id' => $usuario['id']
+            ]));
+        }
+    }
 
     public function migraCPFAtributoParaUsername()
     {
